@@ -1,0 +1,25 @@
+
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  
+
+  .dark {
+    /* ===== DARK MODE ===== */
+          
+    --bg-card: 31 41 55;          
+    --border-main: 55 65 81;       
+
+    --text-main: 255 255 255;     
+    --text-muted: 156 163 175;     
+  }
+
+  /* body {
+    background-color: rgb(var(--bg-main));
+    color: rgb(var(--text-main));
+    margin: 0;
+  } */
+}
