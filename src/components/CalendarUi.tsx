@@ -62,14 +62,25 @@ const GlobalCalendar: React.FC = () => {
         <main className="flex-1 flex flex-col items-center py-8 sm:py-12 px-3 sm:px-4 md:px-6">
 
           {/* HEADER */}
-          <div className="text-center mb-6 sm:mb-10">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl  font-bold mb-2 tracking-tight">Global Calendar</h1>
-            <p className="text-slate-500 dark:text-gray-400 text-xs sm:text-sm">Yearly overviews and week number tracking.</p>
+
+           <div className="w-full flex flex-col items-center justify-center py-3  px-2 sm:px-4">
+            <div className="text-center max-w-4xl mx-auto">
+
+              <h1 className="text-xl sm:text-3xl md:text-4xl lg:text-5xl font-bold whitespace-nowrap">
+                <span>Global Calendar </span>
+
+              </h1>
+
+              <p className="mt-2 sm:mt-4 text-[12px] sm:text-[14px] md:text-base lg:text-lg dark:text-gray-400 text-gray-600 leading-relaxed max-w-2xl mx-auto">
+                              Yearly overviews and week number tracking
+              </p>
+
+            </div>
           </div>
 
           {/* TABS */}
-          <div className="w-full max-w-5xl mx-auto mb-12">
-            <div className="flex bg-[#bacaca] dark:bg-[#111827]/50 p-1.5 rounded-2xl md:rounded-full border border-slate-400 dark:border-white/10 backdrop-blur-md shadow-sm gap-2 md:gap-3 overflow-x-auto no-scrollbar">
+          <div className="w-full max-w-6xl mx-auto mb-12 mt-10">
+            <div className="flex bg-[#c4d5ff] dark:bg-[#111827]/50 p-1.5 rounded-2xl md:rounded-full border border-slate-400 dark:border-white/10 backdrop-blur-md shadow-sm gap-2 md:gap-3 overflow-x-auto no-scrollbar">
               {(["2026", "2027", "2028", "Weeks"] as ViewType[]).map((tab) => (
                 <button
                   key={tab}
@@ -85,7 +96,7 @@ const GlobalCalendar: React.FC = () => {
           </div>
 
           {/* MAIN CARD */}
-          <div className="w-full max-w-6xl relative rounded-[3rem] border border-gray-200 dark:border-white/5 bg-white/40 dark:bg-white/[0.02] overflow-hidden py-10 min-h-[600px] px-4 sm:px-10 shadow-xl transition-all duration-300">
+          <div className="w-full max-w-6xl relative rounded-3xl  border border-gray-200 dark:border-white/5 bg-white/40 dark:bg-white/[0.02] overflow-hidden py-10 min-h-[600px] px-4 sm:px-10 shadow-xl transition-all duration-300">
             <div key={activeView} className="w-full h-full flex flex-col animate-in fade-in slide-in-from-bottom-6 duration-500">
               
               <h3 className="text-center text-2xl sm:text-3xl font-bold dark:text-gray-300 text-gray-600 mb-6 tracking-tight">
@@ -154,7 +165,7 @@ const GlobalCalendar: React.FC = () => {
 
               {/* WEEKS TABLE (ORIGINAL LOGIC MAINTAINED) */}
               {activeView === "Weeks" && (
-                <div className="w-full max-w-5xl mx-auto rounded-[2.5rem] border border-slate-200 dark:border-white/10 bg-white/60 dark:bg-white/[0.03] overflow-hidden shadow-xl">
+                <div className="w-full max-w-5xl mx-auto rounded-3xl border border-slate-200 dark:border-white/10 bg-white/60 dark:bg-white/[0.03] overflow-hidden shadow-xl">
                   <div className="grid grid-cols-12 gap-4 px-6 py-4 bg-purple-600 dark:bg-white/5 border-b border-slate-200 dark:border-white/10 text-[10px] font-bold text-white uppercase f tracking-widest dark:text-slate-400">
                     <div className="col-span-3 sm:col-span-2 text-center">Week</div>
                     <div className="col-span-6 sm:col-span-6 text-left">Duration Period</div>
@@ -210,7 +221,7 @@ const GlobalCalendar: React.FC = () => {
             </div>
           </div>
         </main>
-        <footer className="w-full bg-white/10 dark:bg-[#0B1229] border-t border-slate-300 dark:border-white/10 py-10 text-center text-sm text-gray-500">
+        <footer className="w-full bg-white/10 dark:bg-[#0B1229] border-t border-slate-300 dark:border-white/10 py-10 text-center text-sm text-gray-500 mt-10">
           © 2026 ChronoSync. Premium Global Time Utilities.
         </footer>
       </div>

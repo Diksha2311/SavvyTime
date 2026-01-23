@@ -15,10 +15,6 @@ interface SearchCity {
   country?: string;
 }
 
-// interface AddedCity {
-//   id: string;
-//   name: string;
-// }
 
 interface OpenMeteoCity {
   id: number;
@@ -56,10 +52,10 @@ const cardsData = [
     icon: <MapPin className="text-white" size={24} />,
     title: "Your Location",
     description: "We've detected you are currently in ",
-    location: "New York, USA",
+    location: "INDIA",
     time: "10:42",
     period: "AM",
-    timezone: "EDT (UTC-4)",
+    timezone: "IST (UTC+5:30)",
     weatherIcon: <Sun size={20} className="text-amber-400" />,
   },
 ];
@@ -67,7 +63,7 @@ const cardsData = [
 const DashboardCards = () => {
   const navigate = useNavigate();
   return (
-    <div className="w-full max-w-7xl mt-6 sm:mt-10 md:mt-10">
+    <div className="w-full max-w-7xl !mt-0">
       <div className="grid w-full grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10  px-4 sm:px-6 md:px-8 lg:px-16 mt-10 md:mt-20">
         {cardsData.map((card) => (
           <div
@@ -117,6 +113,7 @@ const DashboardCards = () => {
                   e.stopPropagation();
                   if (card.linkHref && card.linkHref !== "#") {
                     navigate(card.linkHref);
+                    window.scrollTo(0, 0);
                   }
                 }}
                 className="text-blue-600 dark:text-blue-400 text-sm sm:text-base lg:text-lg font-bold mt-4 inline-block group cursor-pointer hover:underline"
@@ -135,73 +132,108 @@ const DashboardCards = () => {
 // --- Main Home Component ---
 export default function Home() {
   const navigate = useNavigate();
-  const [currentTime, setCurrentTime] = useState("");
+const [now, setNow] = useState(new Date());
   const [is24Hour, setIs24Hour] = useState(false);
   const [search, setSearch] = useState("");
   const [suggestions, setSuggestions] = useState<SearchCity[]>([]);
   const [addedCities, setAddedCities] = useState<SearchCity[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
+  
 
   const searchContainerRef = useRef<HTMLDivElement>(null);
+
+
 
   // Click Outside Listener
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (searchContainerRef.current && !searchContainerRef.current.contains(event.target as Node)) {
         setShowDropdown(false);
+        setSearch(""); 
+      setSuggestions([]);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const handleSearch = async (val: string) => {
-    setSearch(val);
-    if (val.trim().length > 0) {
-      setShowDropdown(true);
-      setIsLoading(true);
-      try {
-        const res = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${val}&count=10&language=en&format=json`);
-        const data = await res.json();
-        if (data.results) {
-         const formatted: SearchCity[] = data.results.map((city: OpenMeteoCity): SearchCity =>({
-  id: city.id,
-  name: city.name,
-  country_code: city.country_code,
-  info: `${city.admin1 ? city.admin1 + ", " : ""}${city.country}`,
-  time: new Intl.DateTimeFormat("en-US", {
-    hour: "numeric",
-    minute: "numeric",
-    hour12: true,
-    timeZone: city.timezone,
-  }).format(new Date()).toLowerCase(),
-  timezone: city.timezone,
-  lat: city.latitude,
-  lng: city.longitude,
-  country: city.country,
-}));
 
-          setSuggestions(formatted);
-        } else {
-          setSuggestions([]);
-        }
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setIsLoading(false);
+const handleSearch = async (val: string) => {
+  setSearch(val);
+  const searchLower = val.trim().toLowerCase(); // Input ko normalize karein
+
+  if (searchLower.length > 0) {
+    setShowDropdown(true);
+    setIsLoading(true);
+    try {
+      const res = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${val}&count=20&language=en&format=json`);
+      const data = await res.json();
+      
+      if (data.results) {
+        const uniqueResults: OpenMeteoCity[] = [];
+        const seenInCountry = new Set();
+
+        data.results.forEach((city: OpenMeteoCity) => {
+          // 1. City Name Normalization (ā -> a)
+          const normalizedName = city.name
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .toLowerCase()
+            .trim();
+
+          if (!normalizedName.startsWith(searchLower)) return;
+          const cityKey = `${normalizedName}-${city.country_code.toLowerCase()}-${(city.admin1 || '').toLowerCase()}`;
+
+          if (!seenInCountry.has(cityKey)) {
+            seenInCountry.add(cityKey);
+            uniqueResults.push(city);
+          }
+        });
+
+        // 4. Sorting: India ke results top par
+        const sortedResults = uniqueResults.sort((a, b) => {
+          if (a.country_code === 'IN' && b.country_code !== 'IN') return -1;
+          if (a.country_code !== 'IN' && b.country_code === 'IN') return 1;
+          return 0;
+        });
+
+        const formatted: SearchCity[] = sortedResults.map((city) => ({
+          id: city.id,
+          name: city.name,
+          country_code: city.country_code,
+          info: `${city.admin1 ? city.admin1 + ", " : ""}${city.country}`,
+          time: new Intl.DateTimeFormat("en-US", {
+            hour: "numeric", minute: "numeric", hour12: true, timeZone: city.timezone,
+          }).format(new Date()).toLowerCase(),
+          timezone: city.timezone,
+          lat: city.latitude,
+          lng: city.longitude,
+          country: city.country,
+        }));
+
+        setSuggestions(formatted);
+      } else {
+        setSuggestions([]);
       }
-    } else {
-      setSuggestions([]);
-      setShowDropdown(false);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsLoading(false);
     }
-  };
+  } else {
+    setSuggestions([]);
+    setShowDropdown(false);
+  }
+};
 
   const onAddCity = async (city: SearchCity) => {
-    setAddedCities((prev) => {
-      if (prev.some(c => c.id === city.id)) return prev;
-      return [...prev, city];
-    });
+  setAddedCities((prev) => {
+    if (prev.some(c => c.name === city.name && c.country_code === city.country_code)) {
+      return prev; 
+    }
+    return [...prev, city];
+  });
 
     setIsLoading(true);
     setShowDropdown(false);
@@ -298,29 +330,27 @@ export default function Home() {
   };
 
   // Clock Logic
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const now = new Date();
-      const hours = now.getHours();
-      const minutes = now.getMinutes().toString().padStart(2, "0");
-      const seconds = now.getSeconds().toString().padStart(2, "0");
-      const ampm = hours >= 12 ? "PM" : "AM";
-      const displayHours = !is24Hour ? hours % 12 || 12 : hours;
-      setCurrentTime(`${displayHours}:${minutes}:${seconds}${!is24Hour ? " " + ampm : ""}`);
-    }, 1000);
+useEffect(() => {
+    const interval = setInterval(() => setNow(new Date()), 1000);
     return () => clearInterval(interval);
-  }, [is24Hour]);
+  }, []);
 
-  const today = new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric" });
-  const timeParts = currentTime.match(/(\d+:\d+):(\d+)\s?(AM|PM)?/i);
-  const hoursMinutes = timeParts ? timeParts[1] : "";
-  const secondsDisplay = timeParts ? timeParts[2] + (timeParts[3] ? " " + timeParts[3] : "") : "";
+  const hours = now.getHours();
+  const minutes = now.getMinutes().toString().padStart(2, "0");
+  const seconds = now.getSeconds().toString().padStart(2, "0");
+  const ampm = hours >= 12 ? "PM" : "AM";
+  const displayHours = !is24Hour ? (hours % 12 || 12) : hours;
+const hoursMinutes = `${displayHours}:${minutes}`;
+  const secondsDisplay = `${seconds}${!is24Hour ? " " + ampm : ""}`;
+  const today = now.toLocaleDateString("en-US", { 
+    weekday: "long", month: "long", day: "numeric", year: "numeric" 
+  });
 
   return (
 
     <PageWrapper>
     <div className="min-h-screen w-full flex flex-col bg-[#E9EDFA] dark:bg-[#0B1220] text-slate-800 dark:text-white">
-      <main className="flex-1 flex justify-center px-4 sm:px-6 lg:px-12">
+      <main className=" justify-center px-4 sm:px-6 lg:px-12">
         <div className="w-full flex flex-col items-center space-y-10 mt-10">
 
           <div className="flex items-center justify-center p-3 sm:px-5 sm:py-2.5 bg-white/40 dark:bg-white/5 backdrop-blur-md border border-slate-200/50 dark:border-white/10 rounded-full w-max shadow-sm hover:shadow-md transition-all duration-500 group cursor-default">
@@ -334,19 +364,25 @@ export default function Home() {
             </span>
           </div>
 
-          <div className="text-center max-w-5xl">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl  font-bold">
-              <span className="block">Time conversion,</span>
-              <span className="block text-purple-400 mt-2">simplified.</span>
-            </h1>
-            <p className="mt-6 text-base sm:text-lg lg:text-xl dark:text-gray-400 text-gray-600">
-              Instantly convert time zones across the globe with professional precision.
-            </p>
+
+            <div className="w-full flex flex-col items-center justify-center   px-2 sm:px-4">
+            <div className="text-center max-w-4xl mx-auto">
+              <h1 className="text-xl sm:text-3xl md:text-4xl lg:text-5xl font-bold whitespace-nowrap">
+                <span>Time conversion, </span>
+                <span className="text-purple-400">simplified.</span>
+
+              </h1>
+
+              <p className="mt-2 sm:mt-4 text-[12px] sm:text-[14px] md:text-base lg:text-lg dark:text-gray-400 text-gray-600 leading-relaxed max-w-2xl mx-auto">
+                              Instantly convert time zones across the globe with professional precision.
+              </p>
+
+            </div>
           </div>
 
           {/* --- Updated Search Section --- */}
-          <div ref={searchContainerRef} className="w-full max-w-xl mt-6 relative group/searchbox">
-            <div className="relative flex items-center shadow-sm mt-6">
+          <div ref={searchContainerRef} className="w-full max-w-xl relative group/searchbox">
+            <div className="relative flex items-center shadow-sm ">
               <div className="absolute left-0 pl-4 flex items-center pointer-events-none">
                 {isLoading ? <Loader2 size={18} className="animate-spin text-purple-500" /> : <Search size={20} className="text-slate-500" />}
               </div>
@@ -355,7 +391,7 @@ export default function Home() {
                 value={search}
                 onFocus={() => search.length > 0 && setShowDropdown(true)}
                 onChange={(e) => handleSearch(e.target.value)}
-                placeholder="Search for a city or time zone..."
+                placeholder="Search timezone or cities"
                 className="w-full rounded-full pl-12 pr-16 py-3 bg-white dark:bg-[#161a35] text-slate-900 dark:text-white border border-slate-400 dark:border-white/20 focus:outline-none focus:border-blue-400 text-lg transition-all"
               />
               {/* <div onClick={() => suggestions.length > 0 && onAddCity(suggestions[0])} className="absolute right-0 top-0 bottom-0 px-4 flex items-center cursor-pointer rounded-r-full">
@@ -387,9 +423,9 @@ export default function Home() {
             )}
           </div>
 
-          <div className="w-full max-w-xl flex flex-wrap gap-2">
+          <div className="w-full max-w-xl flex flex-wrap">
             {addedCities.map((city: SearchCity) => (
-              <div key={city.id} className="flex items-center gap-2 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 px-3 py-1 rounded-full text-xs font-bold border border-blue-200 dark:border-blue-800">
+              <div key={city.id} className="flex items-center bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 px-3 py-1 rounded-full text-xs font-bold border border-blue-200 dark:border-blue-800">
                 {city.name}
                 <X size={14} className="cursor-pointer" onClick={() => setAddedCities(addedCities.filter(c => c.id !== city.id))} />
               </div>
@@ -397,8 +433,8 @@ export default function Home() {
           </div>
 
           {/* 12h | 24h Toggle - Positioned slightly before the end */}
-          <div className="w-full flex justify-center lg:justify-end lg:pr-80 mt-8">
-            <div className="flex items-center gap-2 text-[15px] font-black tracking-widest text-slate-400 dark:text-white/30 uppercase select-none lg:ml-60">
+          <div className="w-full flex justify-center lg:justify-end lg:pr-80 !mt-0"> 
+            <div className="flex gap-2 text-[15px] font-black tracking-widest text-slate-400 dark:text-white/30 uppercase select-none lg:ml-60 ">
               <span
                 className={`transition-all duration-200 ${!is24Hour
                   ? "text-indigo-600 dark:text-indigo-400 scale-110"
@@ -423,7 +459,7 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="w-full max-w-4xl px-4 ">
+          <div className="w-full max-w-4xl px-4 !mt-6">
             <div className="flex flex-col lg:flex-row justify-center items-center lg:items-baseline">
               <span className="text-6xl sm:text-8xl md:text-9xl lg:text-[8rem] font-bold leading-none">{hoursMinutes}</span>
               {secondsDisplay && (
@@ -438,7 +474,7 @@ export default function Home() {
           <DashboardCards />
 
 
-<div className="w-full max-w-7xl px-4 sm:px-8 lg:px-16 mt-16">
+<div className="w-full max-w-7xl px-4 sm:px-8 lg:px-16 ">
 
   <div className="
     w-full
@@ -462,17 +498,22 @@ export default function Home() {
 
       {/* Buttons */}
       <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-6">
-        <button className="
-          w-full sm:w-auto px-10 py-3.5
-          rounded-2xl font-bold text-sm tracking-[0.2em] uppercase
-          transition-all duration-300
-          bg-[#131A2E] text-white border border-white/10
-          hover:bg-[#1a2440] hover:border-indigo-500/50
-          hover:shadow-[0_0_25px_rgba(19,26,46,0.4)]
-          active:scale-95
-        ">
-          Get Started
-        </button>
+       <button 
+      onClick={() => {navigate('/city');
+        window.scrollTo(0, 0);
+      }} // 3. Navigate logic
+      className="
+        w-full sm:w-auto px-10 py-3.5
+        rounded-2xl font-bold text-sm tracking-[0.2em] uppercase
+        transition-all duration-300
+        bg-[#131A2E] text-white border border-white/10
+        hover:bg-[#1a2440] hover:border-indigo-500/50
+        hover:shadow-[0_0_25px_rgba(19,26,46,0.4)]
+        active:scale-95
+      "
+    >
+      Get Started
+    </button>
 
         <a href="#" className="
           text-gray-500 dark:text-gray-400 font-bold text-sm tracking-widest uppercase
@@ -484,14 +525,14 @@ export default function Home() {
       </div>
 
 {/* Features Section - Final Responsive Fix */}
-<div className="mt-10 sm:mt-12 flex flex-col sm:flex-row items-center justify-center gap-5 sm:gap-10 w-full">
+<div className="mt-8 sm:mt-10 flex flex-col sm:flex-row items-center justify-center gap-5 sm:gap-10 w-full">
   
   {/* No Sign up required */}
   <div className="flex items-center gap-3 group w-full sm:w-auto px-4 sm:px-0 justify-center sm:justify-start">
     <div className="flex-shrink-0 flex items-center justify-center w-6 h-6 rounded-full bg-green-500/10 border border-green-500/20">
       <Check size={14} className="text-green-500" strokeWidth={4} />
     </div>
-    <span className="text-[10px] sm:text-[11px] font-black tracking-[0.15em] uppercase text-slate-500 dark:text-slate-400 opacity-80 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+    <span className="text-[10px] sm:text-[11px] font-black tracking-[0.15em] uppercase text-slate-500 dark:text-slate-400  whitespace-nowrap">
       No Sign up required
     </span>
   </div>
@@ -501,7 +542,7 @@ export default function Home() {
     <div className="flex-shrink-0 flex items-center justify-center w-6 h-6 rounded-full bg-green-500/10 border border-green-500/20">
       <Check size={14} className="text-green-500" strokeWidth={4} />
     </div>
-    <span className="text-[10px] sm:text-[11px] font-black tracking-[0.15em] uppercase text-slate-500 dark:text-slate-400 opacity-80 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+    <span className="text-[10px] sm:text-[11px] font-black tracking-[0.15em] uppercase text-slate-500 dark:text-slate-400 whitespace-nowrap">
       Free Forever
     </span>
   </div>
@@ -513,11 +554,11 @@ export default function Home() {
 
 
           {/* Popular Quick Conversion */}
-          <div className="mt-10 text-center">
+          <div className=" text-center">
             {/* Heading */}
 
 
-            <p className=" mb-8 mt-8 text-[14px] font-bold tracking-widest text-slate-700 dark:text-slate-500 uppercase">
+            <p className=" mb-10 text-[14px] font-bold tracking-widest text-slate-700 dark:text-slate-500 uppercase">
               Popular Quick Conversion
             </p>
 
@@ -557,7 +598,7 @@ export default function Home() {
       </main>
 
       {/* Footer */}
-      <footer className="mt-20 border-t border-slate-300 dark:border-white/5 bg-[#E9EDFA] dark:bg-[#0B1229]  transition-colors duration-300">
+      <footer className="mt-10 border-t border-slate-300 dark:border-white/5 bg-[#E9EDFA] dark:bg-[#0B1229]  transition-colors duration-300">
         <div className="max-w-7xl mx-auto px-4 py-8">
           <div className="flex flex-col md:flex-row items-center md:items-start justify-between gap-6">
 

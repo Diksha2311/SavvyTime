@@ -1,5 +1,5 @@
 import React from 'react';
-import { Apple, PlayCircle, Clock, Wifi, Shield, Zap, Bell, Share2, Layers, Plus } from 'lucide-react';
+import {  Clock, Wifi, Shield, Zap, Bell, Share2, Layers, Plus } from 'lucide-react';
 import PageWrapper from "./PageWrapper";
 
 // --- 1. STANDARD PHONE FRAME ---
@@ -143,31 +143,47 @@ const ChronoSyncLanding: React.FC = () => {
 
         <div className="flex-1 text-center lg:text-left flex flex-col items-center lg:items-start lg:ml-8">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/10 border dark:border-purple-600/20  border-purple-300 dark:border-white/10 mb-6">
-            <div className="w-1.5 h-1.5 rounded-full bg-purple-500 animate-pulse" />
-            <span className="text-[10px] font-bold tracking-widest text-purple-400 uppercase">Mobile App V2.0</span>
+            <div className="w-1.5 h-1.5 rounded-full bg-purple-600 animate-pulse" />
+            <span className="text-[10px] font-bold tracking-widest text-purple-600 uppercase">Mobile App V2.0</span>
           </div>
-          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight leading-tight text-slate-900 dark:text-white">
+          <h1 className="text-xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight leading-tight text-slate-900 dark:text-white">
             Time control, <span className="text-purple-600 dark:text-purple-400 block mt-2">in your pocket.</span>
           </h1>
           <p className="mt-6 text-lg lg:text-xl text-slate-600 dark:text-gray-400 max-w-xl">
             Download the ChronoSync mobile app to manage teams and timezones on the go. Syncs perfectly with your desktop dashboard.
           </p>
-          <div className="flex flex-wrap gap-4 justify-center lg:justify-start mt-10">
-            <button className="flex items-center gap-3 bg-white text-black px-7 py-3.5 rounded-2xl font-bold hover:bg-gray-100 transition-all active:scale-95 shadow-lg shadow-slate-200">
-              <Apple size={22} fill="black" />
-              <div className="text-left leading-none">
-                <p className="text-[9px] uppercase font-black opacity-60">Download on</p>
-                <p className="text-base">App Store</p>
-              </div>
-            </button>
-            <button className="flex items-center gap-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-7 py-3.5 rounded-2xl font-bold hover:opacity-90 transition-all active:scale-95 shadow-lg shadow-purple-500/20">
-              <PlayCircle size={22} />
-              <div className="text-left leading-none">
-                <p className="text-[9px] uppercase font-black opacity-90">Get it on</p>
-                <p className="text-base">Google Play</p>
-              </div>
-            </button>
-          </div>
+
+
+
+      <div className="flex flex-wrap gap-4 justify-center lg:justify-start mt-10">
+  {/* App Store Button */}
+  <button className="flex items-center gap-3 bg-white text-black px-6 py-2.5 rounded-2xl font-bold  transition-all active:scale-95 shadow-lg shadow-slate-200 border border-slate-100">
+    {/* Apple Official Logo */}
+    <img 
+      src="https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg" 
+      alt="App Store" 
+      className="w-6 h-6" 
+    />
+    <div className="text-left leading-none">
+      <p className="text-[9px] uppercase font-black opacity-60">Download on the</p>
+      <p className="text-lg font-bold">App Store</p>
+    </div>
+  </button>
+
+  {/* Google Play Button */}
+  <button className="flex items-center gap-3  dark: bg-[#0b1d43]  text-white px-6 py-2.5 rounded-2xl font-bold  transition-all active:scale-95 shadow-lg shadow-black/20">
+    {/* Google Play Official Logo */}
+    <img 
+      src="https://upload.wikimedia.org/wikipedia/commons/d/d0/Google_Play_Arrow_logo.svg" 
+      alt="Google Play" 
+      className="w-6 h-6" 
+    />
+    <div className="text-left leading-none">
+      <p className="text-[9px] uppercase font-black opacity-90">Get it on</p>
+      <p className="text-lg font-bold">Google Play</p>
+    </div>
+  </button>
+</div>
         </div>
         <div className="flex justify-center relative lg:mr-8">
           <div className="absolute w-96 h-96 bg-purple-500/10 blur-[120px] rounded-full" />
@@ -183,11 +199,11 @@ const ChronoSyncLanding: React.FC = () => {
       </main>
 
       {/* FEATURES SECTION */}
-      <section className="py-32 px-6 flex flex-col items-center">
+      <section className=" px-6 flex flex-col items-center">
         <div className="max-w-7xl w-full">
-          <h2 className="text-center text-4xl lg:text-5xl font-bold mb-24 text-slate-900 dark:text-white">Powerful Mobile Features</h2>
+          <h2 className="text-center text-4xl lg:text-5xl font-bold mb-20 text-slate-900 dark:text-white">Powerful Mobile Features</h2>
           <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px_1fr] gap-16 lg:gap-8 items-center">
-            <div className="space-y-20 lg:pr-10">
+            <div className="space-y-10 lg:pr-10">
               <FeatureItem icon={<Wifi />} title="Offline Mode" desc="Access your conversions without data." align="right" />
               <FeatureItem icon={<Zap />} title="Instant Sync" desc="Changes reflect immediately on desktop." align="right" />
               <FeatureItem icon={<Layers />} title="Smart Widgets" desc="View timezones from home screen." align="right" />
@@ -214,7 +230,7 @@ const ChronoSyncLanding: React.FC = () => {
                 </div>
               </div>
             </PhoneFrame>
-            <div className="space-y-20 lg:pl-10">
+            <div className="space-y-10 lg:pl-10">
               <FeatureItem icon={<Shield />} title="Secure Data" desc="Enterprise-grade encryption." align="left" />
               <FeatureItem icon={<Bell />} title="Smart Alerts" desc="Notifications before sunset." align="left" />
               <FeatureItem icon={<Share2 />} title="Easy Sharing" desc="Share times as simple links." align="left" />
@@ -224,9 +240,9 @@ const ChronoSyncLanding: React.FC = () => {
       </section>
 
       {/* APP SCREENSHOTS SECTION (ALIGNED) */}
-      <section className="py-32 px-6 flex flex-col items-center  dark:bg-transparent">
+      <section className="py-20 px-6 flex flex-col items-center  dark:bg-transparent">
         <div className="max-w-7xl w-full">
-          <div className="text-center mb-24">
+          <div className="text-center mb-20">
             <h2 className="text-4xl lg:text-5xl font-bold mb-4 text-slate-900 dark:text-white">App Screenshots</h2>
             <p className="text-slate-500 dark:text-gray-400 font-medium italic">A closer look at the mobile experience</p>
           </div>

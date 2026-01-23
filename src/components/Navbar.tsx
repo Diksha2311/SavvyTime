@@ -1,6 +1,6 @@
 // components/Navbar.tsx
 import { useState } from "react"; 
-import { Sun, Moon, Settings, Globe, Menu, X } from "lucide-react";
+import { Sun, Moon, Globe, Menu, X } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 
 export default function Navbar() {
@@ -79,10 +79,6 @@ export default function Navbar() {
             ) : (
               <Moon className="w-5 h-5 text-gray-500 hover:text-purple-500" />
             )}
-          </button>
-
-          <button className="hidden sm:block p-2 rounded hover:bg-gray-100 dark:hover:bg-white/10 ">
-            <Settings className="w-5 h-5 text-gray-500  hover:text-purple-500" />
           </button>
 
           {/* Mobile Menu Button */}

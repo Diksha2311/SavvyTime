@@ -8,13 +8,13 @@ import TimerPage from './components/TimerUi';
 import CalenderPage from './components/CalendarUi';
 import MobileUi from './components/MobileUi';
 
-// Ek alag component banaya taaki useLocation() use kar sakein
+
 function AnimatedRoutes() {
   const location = useLocation();
 
   return (
-    /* mode="wait" se purana page pehle fade-out hoga fir naya page slide-up hoga */
-    <AnimatePresence mode="popLayout">
+
+    <AnimatePresence mode="wait" initial={false}>
       <Routes location={location} key={location.pathname}>
         <Route path="/" element={<Home />} />
         <Route path="/city" element={<CityUi />} />

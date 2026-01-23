@@ -136,15 +136,26 @@ export default function TimerPage() {
         {/* Scrollable Content Area */}
         <main className="flex-1 flex flex-col items-center py-8 sm:py-12 px-3 sm:px-4 md:px-6">
 
-          {/* 1. Header Section */}
-          <div className="text-center mb-6 sm:mb-10">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl  font-bold mb-2 tracking-tight">Chronometer</h1>
-            <p className="text-slate-500 dark:text-gray-400 text-xs sm:text-sm">Precision tools for every moment.</p>
+
+ <div className="w-full flex flex-col items-center justify-center py-3  px-2 sm:px-4">
+            <div className="text-center max-w-4xl mx-auto">
+
+              <h1 className="text-xl sm:text-3xl md:text-4xl lg:text-5xl font-bold whitespace-nowrap">
+                <span>Chronometer </span>
+
+              </h1>
+
+              <p className="mt-2 sm:mt-4 text-[12px] sm:text-[14px] md:text-base lg:text-lg dark:text-gray-400 text-gray-600 leading-relaxed max-w-2xl mx-auto">
+                              Precision tools for every moment.
+              </p>
+
+            </div>
           </div>
+          
 
           {/* 2. Tab Switcher */}
 
-          <div className="w-full max-w-4xl flex sm:flex-row flex-row bg-[#bacaca] dark:bg-gray-800/50 p-1 sm:p-1.5 rounded-full mb-8 sm:mb-12 border border-slate-400 dark:border-white/10 backdrop-blur-md shadow-sm gap-1 sm:gap-3">
+          <div className="w-full max-w-6xl flex sm:flex-row flex-row bg-[#c4d5ff] dark:bg-gray-800/50 p-1 sm:p-1.5 rounded-full mt-10 sm:mb-12 border border-slate-400 dark:border-white/10  gap-1 sm:gap-3">
             {[
               { id: "timer", label: "Timer", icon: Hourglass },
               { id: "stopwatch", label: "Stopwatch", icon: TimerIcon },
@@ -159,14 +170,14 @@ export default function TimerPage() {
                     : "text-slate-500 dark:text-gray-400 dark:hover:bg-white/5  hover:bg-gray-200 hover:text-purple-700"
                   }`}
               >
-                <tab.icon className="w-5 h-5 sm:w-4 sm:h-4" />
-                <span className="text-[8px] sm:text-[13px] mt-0.5 sm:mt-0">{tab.label}</span>
+                <tab.icon className="w-7 h-7 sm:w-5 sm:h-5" />
+                <span className="lg:text-[16px] sm:text-[14px] mt-0.5 sm:mt-0 ">{tab.label}</span>
               </button>
             ))}
           </div>
           {/* 3. Main Display Card */}
 
-          <div className="w-full max-w-6xl relative rounded-[2.5rem] sm:rounded-3xl md:rounded-[3rem] border border-gray-200 dark:border-white/10 bg-white/40 dark:bg-white/[0.02] overflow-hidden mb-8 sm:mb-12 flex flex-col items-center justify-center py-8 sm:py-10 min-h-[450px] sm:min-h-[550px] shadow-xl transition-all duration-300">
+          <div className="w-full max-w-6xl relative rounded-[2.5rem] sm:rounded-3xl md:rounded-[3rem] border border-gray-200 dark:border-white/10 bg-white/40 dark:bg-white/[0.02] overflow-hidden mb-8 sm:mb-12 flex flex-col items-center justify-center py-8 sm:py-10 min-h-[450px] sm:min-h-[550px] shadow-xl transition-all duration-300 mt-8">
 
             {/* CIRCULAR PROGRESS CONTAINER */}
             <div className="relative flex items-center justify-center w-[240px] h-[240px] sm:w-[300px] sm:h-[300px] md:w-[400px] md:h-[400px]">
@@ -204,14 +215,14 @@ export default function TimerPage() {
   
   <div className="flex items-center p-1 rounded-xl bg-white/10 dark:bg-white/5 border border-slate-200 dark:border-white/10 shadow-sm transition-all hover:border-purple-500/50">
     
-    {/* 1. Display Value (Ab Left Side Pe Hai) */}
+    {/* 1. Display Value  */}
     <div className="px-4 min-w-[50px] text-center">
       <span className="font-mono font-black text-purple-600 dark:text-purple-400 text-xl sm:text-2xl">
         {inputMins}
       </span>
     </div>
 
-    {/* 2. Buttons Container (Ab Right Side Pe Hai) */}
+    {/* 2. Buttons Container  */}
     <div className="flex flex-col border-l border-slate-200 dark:border-white/10 pl-1">
       <button 
         onClick={() => {
@@ -320,7 +331,7 @@ export default function TimerPage() {
       shadow-2xl overflow-hidden 
       animate-in fade-in zoom-in-95 sm:slide-in-from-bottom-2 duration-200"
   >
-    {/* Calendar Section: Phone par compact (119px area) aur desktop par p-6 */}
+    {/* Calendar Section: Phone  */}
     <div className="p-3 sm:p-6 w-full sm:w-72 border-b sm:border-b-0 sm:border-r border-slate-100 dark:border-white/5">
       <div className="flex items-center justify-between mb-3 sm:mb-4 px-1">
         <span className="text-[10px] sm:text-xs font-black uppercase tracking-widest text-slate-800 dark:text-white">
@@ -357,7 +368,6 @@ export default function TimerPage() {
       </div>
     </div>
 
-    {/* Timer Section: Phone par h-48 (Bada) aur desktop par auto/pehle jaisa */}
     <div className="flex h-48 sm:h-auto border-t sm:border-t-0 border-slate-100 dark:border-white/5 bg-slate-50/30 dark:bg-white/5">
       <div className="flex-1 sm:w-16 flex flex-col border-r border-slate-100 dark:border-white/5">
         <div className="p-2 text-[9px] font-bold text-center text-slate-400 border-b border-slate-100 dark:border-white/5 uppercase">Hr</div>
@@ -398,32 +408,34 @@ export default function TimerPage() {
             </div>
 
             {/* Control Buttons */}
-            {activeTab !== "countdown" && (
-              <div className="flex justify-center items-center mt-8 relative z-20 w-full px-4">
+{activeTab !== "countdown" && (
+  <div className="flex justify-center items-center  w-full px-4 gap-6 sm:gap-10 relative z-20">
+    
+    {/* Play / Pause Button */}
+    <button
+      onClick={() => setIsActive(!isActive)}
+      className={`w-16 h-16 flex items-center justify-center rounded-full text-white shadow-xl transition-all active:scale-95 ${
+        isActive ? "bg-red-500" : "bg-purple-600"
+      }`}
+    >
+      {isActive ? (
+        <Pause size={28} />
+      ) : (
+        /* ml-0.5 lagane se triangle visually circle ke center mein lagta hai */
+        <Play size={28} className="fill-current ml-0.5" />
+      )}
+    </button>
 
-                {/* 1. SPACER DIV (Left) */}
+    {/* Reset Button */}
+    <button
+      onClick={resetAll}
+      className="w-16 h-16 flex items-center justify-center border-2 border-transparent dark:border-white/10 rounded-full transition-all text-white bg-purple-600 active:scale-95 shadow-lg"
+    >
+      <RotateCcw size={24} />
+    </button>
 
-                <div className="w-16 h-16 mr-10 hidden sm:block invisible" aria-hidden="true" />
-
-            
-                <button
-                  onClick={() => setIsActive(!isActive)}
-                  className={`w-16 h-16 flex items-center justify-center rounded-full text-white shadow-xl transition-transform active:scale-95 ${isActive ? "bg-red-500" : "bg-purple-600"
-                    }`}
-                >
-                  {isActive ? <Pause size={28} /> : <Play size={28} className="fill-current ml-1" />}
-                </button>
-
-                {/* 3. RESET BUTTON (Right) */}
-                <button
-                  onClick={resetAll}
-                  className="ml-10 w-16 h-16 flex items-center justify-center border-2 dark:border-white/10 rounded-full transition-colors text-white bg-purple-600 active:scale-95 shadow-lg"
-                >
-                  <RotateCcw size={24} />
-                </button>
-
-              </div>
-            )}
+  </div>
+)}
           </div>
         </main>
 
